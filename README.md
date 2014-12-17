@@ -1,23 +1,28 @@
 # SyndicationがSynじられない
 
-2014-12-17 大野義貴
+†Gotanda.pm #3 LT†
+
+2014-12-17 大野義貴(CL)
 
 ---
 
 # 自己紹介
 
-* 大野 義貴（CL）
-* 五反田にある会社のWebのインフラ側作業者
+* 大野義貴（CL) twitter @CLCLCL
+* CPAN Author流行ってた頃ノリでCPAN Author
+* 前職は印刷業のエンジニア
+* 印刷見積をWebAPI化する雰囲気醸せる前に退職
+* 現職は五反田の派遣・アポイントマッチング会社のサーバエンジニア
 * 社名が言えないのはお察しください
-* 会社はPHPしか使えない
+* 会社はPHPしか使わない
 
 ---
 
 # RSS Feed = WebAPIの一種
 
-* Web Syndication用
-
 ![web](http://upload.wikimedia.org/wikipedia/en/4/43/Feed-icon.svg)
+
+* Web Syndication用
 
 ---
 
@@ -25,9 +30,10 @@
 
 * Syndication!
 * 差し込み方法
-  - JavaScript？（DOM再描画ださい）
-  - SSI？（化石すぎて誰も知らない）
-  - PHP？（ナウい）
+  1. JavaScript？（DOM再描画ダサい）
+  1. SSI？（化石すぎて誰も知らない）
+  1. CGI?（当然のごとく知っている人がいない）
+  1. PHP？（ナウい）
 * PHPを採用
 
 --- 
@@ -35,18 +41,18 @@
 # ところでWordPressのRSS
 
 * いつの間にかWordPress自体がRSS生成器に
-  - WordPress界の鬼Hackヤバイ
-    - 正直めんどくね？（MovableType使ってた俺的に）
-* WordPress（PHP）が「動的」にRSS
-  - 動的？（MovableType使ってた俺的に）
+* WordPress界の鬼Hackヤバイ
+* 正直めんどくね？（MovableType派的に）
+* WordPress（PHP）が“動的”にRSS生成
+* 動的？（MovableType使いの素朴な疑問）
 
 ---
 
 # WordPressの動的RSSは12時間更新されない
 
-* いったんRSSを配信済みのクライアントには12時間内だとリロードでも304を返す
-  - Cache-Control:とか無視するタイプ
-  - If-Modified-Since:とか見るタイプ
+* いったんRSSを配信済みのクライアントには12時間以内だとリロードでも304を返す
+* Cache-Controlとか無視するタイプ
+* If-Midified-Sinceとか見るタイプ
 * APIとしてはひどい
 
 ---
@@ -54,16 +60,15 @@
 # WordPressから最新のRSSを読みだすHack
 
 * どっち？
-  - WordPressのRSSキャッシュを12時間から5分とかに変更
-  - WordPressのRSSをフェッチして差し込み用HTML生成するプログラムでリクエストヘッダ付与をコメントアウト
+* WordPressのRSSキャッシュを12時間から5分とかに変更
+* WordPressのRSSをフェッチするプログラム側でリクエストヘッダのIf-Modified-Since等の2回目アクセスにつけるヘッダを除去し、毎回初回アクセスに見せかける
+* →後者を選択！
 
 ![ジャガーノート](http://blog-imgs-47-origin.fc2.com/d/e/s/deserlife/jg.jpg)
 
-* 後者を採用
-
 ---
 
-# 結果：ページが表示されなくて修羅場
+# 結果：ページが表示されなくなって現場爆発
 
 * ページの全てのリクエストで差し込み実行
 * ページの全てのリクエストでHTTP経由でWordPress RSS取得
@@ -74,6 +79,8 @@
 ```http://localhost/server-status
 Apache Server Status on localhost
 
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWW.
 
@@ -88,16 +95,6 @@ Scoreboard Key:
 
 # 教訓
 
-* **理屈わからないでWebAPIのように使うな**
-
-# 教訓（教育訓練の略な）
-
-* HTTPのリクエスト・レスポンスを覚えよう←（ｲﾏｺｺ）
-* ブラウザのキャッシュを活用しよう←（1か月後）
-* RSSを静的ファイルにすると、ふかがひくくなるぞ！←（2か月後）
-* Nginxってしってる？←（3か月後）
-* HTTPサーバのキャッシュをつかってみよう←（4か月後）
-* Memcachedってしってる？←（5か月後）
-* ええっ！XAMPPってMemcachedはつかえないのかい？←（6か月後）
-* XAMPPはやめてVagrantにしよう←（7か月後）
-
+* **理屈わからないでWebAPI使うな**
+* HTTPのリクエスト・レスポンスって結構考えられているので基本従おう（RESTもそうだよね）
+* 自分でWebAPIを実装するなら304レスポンスとか使わない手はないぞ！
